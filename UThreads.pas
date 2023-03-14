@@ -3,15 +3,17 @@ unit UThreads;
 interface
 
 uses
-  System.Classes;
+  System.Classes, System.SysUtils, UPrimeNumber;
 
 type
   TNewThread = class(TThread)
   private
     { Private declarations }
     Progress:integer;
+    PrimeNumber:integer;  // Глобальная переменная простое число
     procedure SetProgress;
     procedure UpdateProgress;
+    procedure UpdateMemo;
   protected
     procedure Execute; override;
   end;
@@ -67,9 +69,15 @@ begin
    Form1.CriticalSection.Enter;
   for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
   begin
-    sleep(50);
+//    sleep(50);
     Progress:=i;
     Synchronize(UpdateProgress);
+    if IsNumberPrime(i) then
+    begin
+      PrimeNumber:=i;
+      Synchronize(UpdateMemo);
+    end;
+
   end;
   Form1.CriticalSection.Leave;
 end;
@@ -77,9 +85,13 @@ end;
 procedure TNewThread.UpdateProgress;
 begin
   Form1.ProgressBar1.Position:=Progress;
+  Form1.StatusBar1.Panels[0].Text:=IntToStr(Form1.FThreadRefCount);
 end;
 
-
+procedure TNewThread.UpdateMemo;
+begin
+  Form1.Memo1.Text:= Form1.Memo1.Text + IntToStr(PrimeNumber)+' ';
+end;
 
 
 end.

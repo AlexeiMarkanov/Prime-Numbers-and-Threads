@@ -11,24 +11,58 @@ object Form1: TForm1
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
-  object Button1: TButton
-    Left = 40
-    Top = 168
-    Width = 75
-    Height = 25
-    Action = AStartNewThread
-    TabOrder = 0
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 182
+    Width = 447
+    Height = 19
+    Panels = <
+      item
+        Width = 50
+      end>
   end
-  object ProgressBar1: TProgressBar
-    Left = 144
-    Top = 176
-    Width = 150
-    Height = 17
+  object Memo1: TMemo
+    Left = 0
+    Top = 0
+    Width = 447
+    Height = 141
+    Align = alClient
     TabOrder = 1
+    ExplicitLeft = 16
+    ExplicitTop = 32
+    ExplicitWidth = 185
+    ExplicitHeight = 89
+  end
+  object Panel1: TPanel
+    Left = 0
+    Top = 141
+    Width = 447
+    Height = 41
+    Align = alBottom
+    TabOrder = 2
+    ExplicitLeft = 40
+    ExplicitTop = 135
+    ExplicitWidth = 305
+    object Button1: TButton
+      Left = 16
+      Top = 10
+      Width = 75
+      Height = 25
+      Action = AStartNewThread
+      TabOrder = 0
+    end
+    object ProgressBar1: TProgressBar
+      Left = 105
+      Top = 18
+      Width = 176
+      Height = 17
+      TabOrder = 1
+    end
   end
   object ActionList1: TActionList
     Left = 352
