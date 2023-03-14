@@ -55,19 +55,23 @@ uses main;
 procedure TNewThread.Execute;
 begin
   { Place thread code here }
+
   SetProgress;
+
 end;
 
 procedure TNewThread.SetProgress;
 var
   i: integer;
 begin
+   Form1.CriticalSection.Enter;
   for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
   begin
     sleep(50);
     Progress:=i;
     Synchronize(UpdateProgress);
   end;
+  Form1.CriticalSection.Leave;
 end;
 
 procedure TNewThread.UpdateProgress;

@@ -2,7 +2,8 @@ program PrimeNumberThreads;
 
 uses
   Vcl.Forms,
-  main in 'main.pas' {Form1};
+  main in 'main.pas' {Form1},
+  UThreads in 'UThreads.pas';
 
 {$R *.res}
 
