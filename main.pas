@@ -43,6 +43,8 @@ type
     procedure Execute; override;
   public
     OutMemo: TMemo;
+    MyFileName: string;
+    SharedFileName: string;
   end;
 
 var
@@ -137,7 +139,7 @@ begin
       PrimeNumber:=i;
       CriticalSection.Enter;
         MaxFounPrimeNumber:=i;
-        SaveToFile(FileName3,i);
+        SaveToFile(SharedFileName,i);
       CriticalSection.Leave;
       Synchronize(UpdateMemo);
     end;
@@ -155,6 +157,7 @@ end;
 procedure TNewThread.UpdateMemo;
 begin
   OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
+  SaveToFile(MyFileName,PrimeNumber);
 end;
 
 // -------------------------------------------------------------------
@@ -179,6 +182,8 @@ begin
   Inc(FThreadRefCount);
   NewThread.OnTerminate:=HandleTerminate;
   NewThread.OutMemo:=Memo1;
+  NewThread.SharedFileName:=FileName3;
+  NewThread.MyFileName:=FileName1;
   NewThread.Start;
 
   NewThread2:=TNewThread.Create(true);
@@ -187,6 +192,8 @@ begin
   Inc(FThreadRefCount);
   NewThread2.OnTerminate:=HandleTerminate;
   NewThread2.OutMemo:=Memo2;
+  NewThread2.SharedFileName:=FileName3;
+  NewThread2.MyFileName:= FileName2;
   NewThread2.Start;
 end;
 
