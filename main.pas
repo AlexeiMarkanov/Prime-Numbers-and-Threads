@@ -147,7 +147,7 @@ end;
 procedure TNewThread.UpdateProgress;
 begin
   Form1.ProgressBar1.Position:=Progress;
-  Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:='Количество потоков: '+IntToStr(ThreadRefCount);
 end;
 
 procedure TNewThread.UpdateMemo;
@@ -217,7 +217,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
     CriticalSection:=TCriticalSection.Create;
     ThreadRefCount:=0;
-    Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
+    Form1.StatusBar1.Panels[0].Text:='Количество потоков: '+IntToStr(ThreadRefCount);
     ProgressBar1.Min:=MinRange;
     ProgressBar1.Max:=MaxRange;
 end;
@@ -230,7 +230,7 @@ end;
 procedure TForm1.HandleTerminate(Sender: TObject);
 begin
   Dec(ThreadRefCount);
-  Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:='Количество потоков: '+IntToStr(ThreadRefCount);
 end;
 
 

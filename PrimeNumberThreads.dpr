@@ -3,7 +3,6 @@ program PrimeNumberThreads;
 uses
   Vcl.Forms,
   main in 'main.pas' {Form1},
-  UThreads in 'UThreads.pas',
   UPrimeNumber in 'UPrimeNumber.pas';
 
 {$R *.res}
