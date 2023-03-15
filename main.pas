@@ -58,7 +58,7 @@ implementation
 
 uses UPrimeNumber;
 
-const MaxRange = 1000000;
+const MaxRange = 1000;
       MinRange = 2;
       FileName1 = 'Thread1.txt';
       FileName2 = 'Thread2.txt';
@@ -67,7 +67,7 @@ const MaxRange = 1000000;
 var   NewThread       : TNewThread;
       NewThread2      : TNewThread;
       CriticalSection : TCriticalSection;   // критическая секция
-      FThreadRefCount : integer;            // число одновременно запушенных потоков
+      ThreadRefCount : integer;            // число одновременно запушенных потоков
       MaxFounPrimeNumber: integer;          // наибольшее простое число, найденное в
                                             // ходе текущего расчета
 
@@ -127,37 +127,43 @@ end;
 procedure TNewThread.SetProgress;
 var
   i: integer;
+  NumbersCount:integer;     // сколько простых чисел нашел каждый из потоков
 begin
-
+  NumbersCount:=0;
+  Synchronize(procedure begin OutMemo.Lines.Add('Старт расчета') end);
   for i:=MinRange to MaxRange do
   begin
-//    sleep(50);
     Progress:=i;
     Synchronize(UpdateProgress);
-    if IsNumberPrime(i) and (i>MaxFounPrimeNumber) then
+    if IsNumberPrime(i) and (i>MaxFounPrimeNumber) then   // кто первый нашел
     begin
       PrimeNumber:=i;
-      CriticalSection.Enter;
-        MaxFounPrimeNumber:=i;
-        SaveToFile(SharedFileName,i);
+      CriticalSection.Enter;                       // тот в критической секции
+        MaxFounPrimeNumber:=i;                     // увеличивает рекорд
+        SaveToFile(SharedFileName,i);              // делает запись в общий файл
       CriticalSection.Leave;
+      SaveToFile(MyFileName,PrimeNumber);          // делает запись в свой файл
       Synchronize(UpdateMemo);
+      inc(NumbersCount);
     end;
 
   end;
-
+  Synchronize(procedure begin OutMemo.Lines.Add('Расчет окончен') end);
+  Synchronize(procedure begin OutMemo.Lines.Add('Найдено ' + IntToStr(NumbersCount)+
+  ' простых чисел') end);
 end;
 
 procedure TNewThread.UpdateProgress;
 begin
   Form1.ProgressBar1.Position:=Progress;
-  Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
 end;
 
 procedure TNewThread.UpdateMemo;
 begin
 //  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
-  SaveToFile(MyFileName,PrimeNumber);
+
+
 end;
 
 // -------------------------------------------------------------------
@@ -172,14 +178,14 @@ begin
   if not(CanStart) then exit;
 
   MaxFounPrimeNumber:=0; //  Обнуление наибольшего простого числа, найденного в
-                        // ходе текущего расчета
+                        // ходе прошлого расчета
   Memo1.Lines.Clear;
   Memo2.Lines.Clear;
 
   NewThread:=TNewThread.Create(true);
   NewThread.FreeOnTerminate:=true;
   NewThread.Priority:=tpLower;
-  Inc(FThreadRefCount);
+  Inc(ThreadRefCount);
   NewThread.OnTerminate:=HandleTerminate;
   NewThread.OutMemo:=Memo1;
   NewThread.SharedFileName:=FileName3;
@@ -189,7 +195,7 @@ begin
   NewThread2:=TNewThread.Create(true);
   NewThread2.FreeOnTerminate:=true;
   NewThread2.Priority:=tpLower;
-  Inc(FThreadRefCount);
+  Inc(ThreadRefCount);
   NewThread2.OnTerminate:=HandleTerminate;
   NewThread2.OutMemo:=Memo2;
   NewThread2.SharedFileName:=FileName3;
@@ -201,7 +207,7 @@ procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 {https://prog-example.ru/mnogopotochnost.html что-то тут не то}
 begin
   CanClose := true;
-  if FThreadRefCount>0 then
+  if ThreadRefCount>0 then
   begin
     if MessageDlg('Threads active. Do you still want to quit?',
       mtWarning, [mbYes, mbNo], 0) = mrNo then
@@ -210,7 +216,7 @@ begin
   {Sleep(50000);}{Line C}
   if CanClose then
   begin
-    if FThreadRefCount>0 then
+    if ThreadRefCount>0 then
     begin
 //      NewThread.Terminate;
 ////      NewThread.WaitFor;
@@ -223,8 +229,8 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
     CriticalSection:=TCriticalSection.Create;
-    FThreadRefCount:=0;
-    Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
+    ThreadRefCount:=0;
+    Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
     ProgressBar1.Min:=MinRange;
     ProgressBar1.Max:=MaxRange;
 end;
@@ -236,8 +242,8 @@ end;
 
 procedure TForm1.HandleTerminate(Sender: TObject);
 begin
-  Dec(FThreadRefCount);
-  Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
+  Dec(ThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
 end;
 
 
