@@ -16,6 +16,14 @@ object Form1: TForm1
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
+  object Splitter1: TSplitter
+    Left = 217
+    Top = 0
+    Height = 141
+    ExplicitLeft = 216
+    ExplicitTop = 32
+    ExplicitHeight = 100
+  end
   object StatusBar1: TStatusBar
     Left = 0
     Top = 182
@@ -29,14 +37,10 @@ object Form1: TForm1
   object Memo1: TMemo
     Left = 0
     Top = 0
-    Width = 447
+    Width = 217
     Height = 141
-    Align = alClient
+    Align = alLeft
     TabOrder = 1
-    ExplicitLeft = 16
-    ExplicitTop = 32
-    ExplicitWidth = 185
-    ExplicitHeight = 89
   end
   object Panel1: TPanel
     Left = 0
@@ -63,6 +67,18 @@ object Form1: TForm1
       Height = 17
       TabOrder = 1
     end
+  end
+  object Memo2: TMemo
+    Left = 220
+    Top = 0
+    Width = 227
+    Height = 141
+    Align = alClient
+    Lines.Strings = (
+      'Memo2')
+    TabOrder = 3
+    ExplicitLeft = 248
+    ExplicitWidth = 199
   end
   object ActionList1: TActionList
     Left = 352

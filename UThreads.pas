@@ -16,6 +16,8 @@ type
     procedure UpdateMemo;
   protected
     procedure Execute; override;
+  public
+    OutMemo: string;
   end;
 
 implementation

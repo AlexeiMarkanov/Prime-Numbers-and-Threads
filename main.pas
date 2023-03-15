@@ -16,6 +16,8 @@ type
     StatusBar1: TStatusBar;
     Memo1: TMemo;
     Panel1: TPanel;
+    Splitter1: TSplitter;
+    Memo2: TMemo;
     procedure AStartNewThreadExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
