@@ -36,7 +36,6 @@ type
     { Private declarations }
     Progress:integer;
     PrimeNumber:integer;  // Глобальная переменная простое число
-    procedure SetProgress;
     procedure UpdateProgress;
     procedure UpdateMemo;
   protected
@@ -117,14 +116,6 @@ end;
 
 
 procedure TNewThread.Execute;
-begin
-  { Place thread code here }
-
-  SetProgress;
-
-end;
-
-procedure TNewThread.SetProgress;
 var
   i: integer;
   NumbersCount:integer;     // сколько простых чисел нашел каждый из потоков
@@ -156,7 +147,7 @@ end;
 procedure TNewThread.UpdateProgress;
 begin
   Form1.ProgressBar1.Position:=Progress;
-  Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
 end;
 
 procedure TNewThread.UpdateMemo;
@@ -205,24 +196,19 @@ begin
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-{https://prog-example.ru/mnogopotochnost.html что-то тут не то}
 begin
   CanClose := true;
   if ThreadRefCount>0 then
   begin
-    if MessageDlg('Threads active. Do you still want to quit?',
+    if MessageDlg('Идет расчет. Вы точно хотите выйти?',
       mtWarning, [mbYes, mbNo], 0) = mrNo then
       CanClose := false;
   end;
-  {Sleep(50000);}{Line C}
   if CanClose then
   begin
     if ThreadRefCount>0 then
     begin
-//      NewThread.Terminate;
-////      NewThread.WaitFor;
-//      NewThread.Free;
-////      NewThread := nil;
+      //
     end;
   end;
 end;
@@ -231,7 +217,7 @@ procedure TForm1.FormCreate(Sender: TObject);
 begin
     CriticalSection:=TCriticalSection.Create;
     ThreadRefCount:=0;
-    Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
+    Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
     ProgressBar1.Min:=MinRange;
     ProgressBar1.Max:=MaxRange;
 end;
@@ -244,7 +230,7 @@ end;
 procedure TForm1.HandleTerminate(Sender: TObject);
 begin
   Dec(ThreadRefCount);
-  Form1.StatusBar1.Panels[0].Text:=IntToStr(ThreadRefCount);
+  Form1.StatusBar1.Panels[0].Text:='Количество потоко: '+IntToStr(ThreadRefCount);
 end;
 
 
