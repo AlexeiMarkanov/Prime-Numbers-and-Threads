@@ -58,7 +58,7 @@ implementation
 
 uses UPrimeNumber;
 
-const MaxRange = 1000;
+const {$IFDEF DEBUG} MaxRange = 1000; {$ELSE}  MaxRange = 1000000; {$ENDIF}
       MinRange = 2;
       FileName1 = 'Thread1.txt';
       FileName2 = 'Thread2.txt';
@@ -161,8 +161,9 @@ end;
 
 procedure TNewThread.UpdateMemo;
 begin
-//  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
-
+{$IFDEF Debug}
+  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
+{$ENDIF}
 
 end;
 
