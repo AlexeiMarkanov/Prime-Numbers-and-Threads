@@ -58,13 +58,56 @@ uses UPrimeNumber;
 
 const MaxRange = 1000;
       MinRange = 2;
+      FileName1 = 'Thread1.txt';
+      FileName2 = 'Thread2.txt';
+      FileName3 = 'Result.txt';
 
 var   NewThread       : TNewThread;
       NewThread2      : TNewThread;
       CriticalSection : TCriticalSection;   // критическая секция
       FThreadRefCount : integer;            // число одновременно запушенных потоков
-      MaxFounPrimeNumber: integer;
+      MaxFounPrimeNumber: integer;          // наибольшее простое число, найденное в
+                                            // ходе текущего расчета
 
+// -------------------------------------------------------------------
+// Операции с файлами
+//--------------------------------------------------------------------
+
+// Добавление найденного числа в конец файла
+procedure SaveToFile (FileName:string; Number:integer);
+var f: TextFile;
+begin
+  AssignFile(f,FileName);
+  if FileExists(FileName) then Append(f) else  Rewrite(f);
+  write(f,IntToStr(Number)+' ');
+  CloseFile(f);
+end;
+
+// Очистка файла перед началом работы
+procedure EraseFile(FileName:string);
+var f: TextFile;
+begin
+  AssignFile(f,FileName);
+  if FileExists(FileName) then Rewrite(f);
+  CloseFile(f);
+end;
+
+// Запрашиваем подтверждение перезаписи файлов перед новымм запуском
+function CanStart:boolean;
+begin
+  if  (FileExists(FileName1)) or (FileExists(FileName2)) or (FileExists(FileName3)) then
+  begin
+    Result:=false;
+    if MessageDlg('Файлы результатов будут перезаписаны. Продолжить?',
+    mtWarning, [mbYes, mbNo], 0) = mrYes then
+    begin
+      if (FileExists(FileName1)) then EraseFile(FileName1);
+      if (FileExists(FileName2)) then EraseFile(FileName2);
+      if (FileExists(FileName3)) then EraseFile(FileName3);
+      Result:=true
+    end;
+  end else Result:=true;
+end;
 
 // -------------------------------------------------------------------
 // TNewThread
@@ -94,6 +137,7 @@ begin
       PrimeNumber:=i;
       CriticalSection.Enter;
         MaxFounPrimeNumber:=i;
+        SaveToFile(FileName3,i);
       CriticalSection.Leave;
       Synchronize(UpdateMemo);
     end;
@@ -122,6 +166,13 @@ end;
 procedure TForm1.AStartNewThreadExecute(Sender: TObject);
 
 begin
+  if not(CanStart) then exit;
+
+  MaxFounPrimeNumber:=0; //  Обнуление наибольшего простого числа, найденного в
+                        // ходе текущего расчета
+  Memo1.Lines.Clear;
+  Memo2.Lines.Clear;
+
   NewThread:=TNewThread.Create(true);
   NewThread.FreeOnTerminate:=true;
   NewThread.Priority:=tpLower;
@@ -169,7 +220,6 @@ begin
     Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
     ProgressBar1.Min:=MinRange;
     ProgressBar1.Max:=MaxRange;
-    MaxFounPrimeNumber:=0;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
