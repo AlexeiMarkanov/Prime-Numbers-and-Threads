@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, System.Actions,
-  Vcl.ActnList, Vcl.StdCtrls, SyncObjs, UThreads, Vcl.ExtCtrls;
+  Vcl.ActnList, Vcl.StdCtrls, SyncObjs, Vcl.ExtCtrls;
 
 type
   TForm1 = class(TForm)
@@ -24,22 +24,93 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   private
     { Private declarations }
-    const MaxRange = 1000;
-          MinRange = 2;
+
   public
     { Public declarations }
-    NewThread: TNewThread;
-    CriticalSection: TCriticalSection;
-    FThreadRefCount: integer;
+
     procedure HandleTerminate(Sender:TObject);
+  end;
+
+  TNewThread = class(TThread)
+  private
+    { Private declarations }
+    Progress:integer;
+    PrimeNumber:integer;  // Глобальная переменная простое число
+    procedure SetProgress;
+    procedure UpdateProgress;
+    procedure UpdateMemo;
+  protected
+    procedure Execute; override;
+  public
+    OutMemo: string;
   end;
 
 var
   Form1: TForm1;
 
+
+
 implementation
 
 {$R *.dfm}
+
+uses UPrimeNumber;
+
+const MaxRange = 1000;
+      MinRange = 2;
+
+var   NewThread: TNewThread;
+      CriticalSection: TCriticalSection;
+      FThreadRefCount: integer;
+
+
+// -------------------------------------------------------------------
+// TNewThread
+//--------------------------------------------------------------------
+
+
+procedure TNewThread.Execute;
+begin
+  { Place thread code here }
+
+  SetProgress;
+
+end;
+
+procedure TNewThread.SetProgress;
+var
+  i: integer;
+begin
+  CriticalSection.Enter;
+  for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
+  begin
+//    sleep(50);
+    Progress:=i;
+    Synchronize(UpdateProgress);
+    if IsNumberPrime(i) then
+    begin
+      PrimeNumber:=i;
+      Synchronize(UpdateMemo);
+    end;
+
+  end;
+  CriticalSection.Leave;
+end;
+
+procedure TNewThread.UpdateProgress;
+begin
+  Form1.ProgressBar1.Position:=Progress;
+  Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
+end;
+
+procedure TNewThread.UpdateMemo;
+begin
+  Form1.Memo1.Text:= Form1.Memo1.Text + IntToStr(PrimeNumber)+' ';
+end;
+
+// -------------------------------------------------------------------
+// Form1
+//--------------------------------------------------------------------
 
 
 

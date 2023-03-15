@@ -60,39 +60,39 @@ procedure TNewThread.Execute;
 begin
   { Place thread code here }
 
-  SetProgress;
+//  SetProgress;
 
 end;
 
 procedure TNewThread.SetProgress;
-var
-  i: integer;
+//var
+//  i: integer;
 begin
-   Form1.CriticalSection.Enter;
-  for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
-  begin
-//    sleep(50);
-    Progress:=i;
-    Synchronize(UpdateProgress);
-    if IsNumberPrime(i) then
-    begin
-      PrimeNumber:=i;
-      Synchronize(UpdateMemo);
-    end;
-
-  end;
-  Form1.CriticalSection.Leave;
+//   Form1.CriticalSection.Enter;
+//  for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
+//  begin
+////    sleep(50);
+//    Progress:=i;
+//    Synchronize(UpdateProgress);
+//    if IsNumberPrime(i) then
+//    begin
+//      PrimeNumber:=i;
+//      Synchronize(UpdateMemo);
+//    end;
+//
+//  end;
+//  Form1.CriticalSection.Leave;
 end;
 
 procedure TNewThread.UpdateProgress;
 begin
-  Form1.ProgressBar1.Position:=Progress;
-  Form1.StatusBar1.Panels[0].Text:=IntToStr(Form1.FThreadRefCount);
+//  Form1.ProgressBar1.Position:=Progress;
+//  Form1.StatusBar1.Panels[0].Text:=IntToStr(Form1.FThreadRefCount);
 end;
 
 procedure TNewThread.UpdateMemo;
 begin
-  Form1.Memo1.Text:= Form1.Memo1.Text + IntToStr(PrimeNumber)+' ';
+//  Form1.Memo1.Text:= Form1.Memo1.Text + IntToStr(PrimeNumber)+' ';
 end;
 
 
