@@ -61,8 +61,9 @@ const MaxRange = 1000;
 
 var   NewThread       : TNewThread;
       NewThread2      : TNewThread;
-      CriticalSection : TCriticalSection;
-      FThreadRefCount : integer;
+      CriticalSection : TCriticalSection;   // критическая секция
+      FThreadRefCount : integer;            // число одновременно запушенных потоков
+      MaxFounPrimeNumber: integer;
 
 
 // -------------------------------------------------------------------
@@ -82,20 +83,23 @@ procedure TNewThread.SetProgress;
 var
   i: integer;
 begin
-  CriticalSection.Enter;
+
   for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
   begin
 //    sleep(50);
     Progress:=i;
     Synchronize(UpdateProgress);
-    if IsNumberPrime(i) then
+    if IsNumberPrime(i) and (i>MaxFounPrimeNumber) then
     begin
       PrimeNumber:=i;
+      CriticalSection.Enter;
+        MaxFounPrimeNumber:=i;
+      CriticalSection.Leave;
       Synchronize(UpdateMemo);
     end;
 
   end;
-  CriticalSection.Leave;
+
 end;
 
 procedure TNewThread.UpdateProgress;
@@ -165,6 +169,7 @@ begin
     Form1.StatusBar1.Panels[0].Text:=IntToStr(FThreadRefCount);
     ProgressBar1.Min:=MinRange;
     ProgressBar1.Max:=MaxRange;
+    MaxFounPrimeNumber:=0;
 end;
 
 procedure TForm1.FormDestroy(Sender: TObject);
