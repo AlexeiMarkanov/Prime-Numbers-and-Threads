@@ -42,7 +42,7 @@ type
   protected
     procedure Execute; override;
   public
-    OutMemo: string;
+    OutMemo: TMemo;
   end;
 
 var
@@ -59,9 +59,10 @@ uses UPrimeNumber;
 const MaxRange = 1000;
       MinRange = 2;
 
-var   NewThread: TNewThread;
-      CriticalSection: TCriticalSection;
-      FThreadRefCount: integer;
+var   NewThread       : TNewThread;
+      NewThread2      : TNewThread;
+      CriticalSection : TCriticalSection;
+      FThreadRefCount : integer;
 
 
 // -------------------------------------------------------------------
@@ -105,7 +106,7 @@ end;
 
 procedure TNewThread.UpdateMemo;
 begin
-  Form1.Memo1.Text:= Form1.Memo1.Text + IntToStr(PrimeNumber)+' ';
+  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
 end;
 
 // -------------------------------------------------------------------
@@ -122,7 +123,16 @@ begin
   NewThread.Priority:=tpLower;
   Inc(FThreadRefCount);
   NewThread.OnTerminate:=HandleTerminate;
+  NewThread.OutMemo:=Memo1;
   NewThread.Start;
+
+  NewThread2:=TNewThread.Create(true);
+  NewThread2.FreeOnTerminate:=true;
+  NewThread2.Priority:=tpLower;
+  Inc(FThreadRefCount);
+  NewThread2.OnTerminate:=HandleTerminate;
+  NewThread2.OutMemo:=Memo2;
+  NewThread2.Start;
 end;
 
 procedure TForm1.FormCloseQuery(Sender: TObject; var CanClose: Boolean);

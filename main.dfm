@@ -74,8 +74,6 @@ object Form1: TForm1
     Width = 227
     Height = 141
     Align = alClient
-    Lines.Strings = (
-      'Memo2')
     TabOrder = 3
     ExplicitLeft = 248
     ExplicitWidth = 199
