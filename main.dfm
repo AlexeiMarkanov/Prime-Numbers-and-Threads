@@ -49,9 +49,6 @@ object Form1: TForm1
     Height = 41
     Align = alBottom
     TabOrder = 2
-    ExplicitLeft = 40
-    ExplicitTop = 135
-    ExplicitWidth = 305
     object Button1: TButton
       Left = 16
       Top = 10
@@ -75,8 +72,6 @@ object Form1: TForm1
     Height = 141
     Align = alClient
     TabOrder = 3
-    ExplicitLeft = 248
-    ExplicitWidth = 199
   end
   object ActionList1: TActionList
     Left = 352

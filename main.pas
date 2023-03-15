@@ -58,7 +58,7 @@ implementation
 
 uses UPrimeNumber;
 
-const MaxRange = 1000;
+const MaxRange = 1000000;
       MinRange = 2;
       FileName1 = 'Thread1.txt';
       FileName2 = 'Thread2.txt';
@@ -129,7 +129,7 @@ var
   i: integer;
 begin
 
-  for i:=Form1.ProgressBar1.Min to Form1.ProgressBar1.Max do
+  for i:=MinRange to MaxRange do
   begin
 //    sleep(50);
     Progress:=i;
@@ -156,7 +156,7 @@ end;
 
 procedure TNewThread.UpdateMemo;
 begin
-  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
+//  OutMemo.Text:= OutMemo.Text + IntToStr(PrimeNumber)+' ';
   SaveToFile(MyFileName,PrimeNumber);
 end;
 
